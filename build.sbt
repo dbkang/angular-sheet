@@ -1,4 +1,4 @@
-name := "angular-play-test2"
+name := "play-template"
 
 version := "1.0-SNAPSHOT"
 
