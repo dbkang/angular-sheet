@@ -2,8 +2,15 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           controllers.Application.index
+GET        /webjars/*file                    controllers.WebJarAssets.at(file)
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+# Home page
+GET        /                                 controllers.Application.redirect()
+
+GET        /dynamic/                         controllers.Application.index(clientRoute="")
+
+GET        /dynamic/*clientRoute             controllers.Application.index(clientRoute)
+
+# Map the JS resource paths
+GET        /*file                            controllers.Assets.at(path="/public", file)
+
