@@ -1,0 +1,6 @@
+table.sheet td {
+  border: 2px solid;
+}
+table.sheet td.selected {
+  border: 2px solid #5292F7;
+}
