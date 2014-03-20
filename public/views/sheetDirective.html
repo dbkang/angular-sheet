@@ -1,8 +1,14 @@
 <table class="sheet">
   <tbody> 
+    <thead ng-if="columns">
+      <th></th>
+      <th ng-repeat="column in columns track by column">{{column}}</th>
+    </thead>
     <tr ng-repeat="row in sheetData" ng-init="$rowIndex = $index;">
+      <td class="row-header">{{$rowIndex + 1}}</td>
       <td ng-repeat="cell in row track by $index"
-          ng-click="selectCell($rowIndex, $index)">
+          ng-click="selectCell($rowIndex, $index)"
+          class="cell">
         {{cell}}
       </td>
     </tr>
