@@ -18,6 +18,12 @@
         else if (scope.sheetData && scope.sheetData[0] && scope.sheetData[0].length)
           columnCount = scope.sheetData[0].length;
 
+        scope.sheetModel = scope.sheetData.map(function (row) {
+          return row.map(function (cell) {
+            return { formula: cell };
+          });
+        });
+
         if (scope.sheetOptions && scope.sheetOption.rowCount)
           rowCount = scope.sheetOptions.rowCount;
         else if (scope.sheetData && scope.sheetData.length)
@@ -25,9 +31,10 @@
 
         scope.columns = $sheet.generateHeaders(columnCount);
         scope.columnWidths = scope.columns.map(function () { return 50; });
-        scope.rowHeights = scope.sheetData.map(function () { return 25; });
+        scope.rowHeights = scope.sheetModel.map(function () { return 25; });
 
-        scope.selectCell = function (row, col) {
+        scope.selectCell = function(row, col) {
+          scope.editMode = false;
           angular.element(element[0].querySelector(".selected")).removeClass('selected');
           scope.current.row = row;
           scope.current.column = col;
@@ -55,6 +62,10 @@
           td.addClass('selected');
         };
 
+        scope.editCell = function(row, col) {
+          console.log("edit!");
+          scope.editMode = true;
+        };
         console.log('sheetSheet Directive, here I stand!');
       }
     };
