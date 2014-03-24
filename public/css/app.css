@@ -1,6 +1,37 @@
-table.sheet td.cell {
-  border: 1px solid;
+div.sheet-container {
+    position: relative;
 }
+
+table.sheet th,
+table.sheet td.cell,
+table.sheet td.row-header {
+    border: 1px solid #CCCCCC;
+    margin: 0px;
+    padding: 2px;
+}
+
+table.sheet th,
+table.sheet td.row-header {
+    text-align: center;
+}
+
+table.sheet th {
+    height: 25px
+}
+
+table.sheet th span,
+table.sheet td.row-header span {
+    display: inline-block;
+    width: 6px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 table.sheet td.cell.selected {
-  border: 2px solid #5292F7;
+
+}
+
+div.sheet-container div.sheet-cursor {
+    border: 2px solid #5292F7;
+    position: absolute;
 }

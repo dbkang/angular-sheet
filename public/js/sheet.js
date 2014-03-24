@@ -1,9 +1,8 @@
 'use strict';
 
 (function() {
-  angular.module('sheetDemo').directive('sheetSheet', ['$sheet', sheetDirective]);
-  function sheetDirective($sheet) {
-    var current = {};
+  angular.module('sheetDemo').directive('sheetSheet', ['$sheet', '$window', sheetDirective]);
+  function sheetDirective($sheet, $window) {
     return {
       scope: {
         sheetData: "=",
@@ -13,6 +12,7 @@
       link: function (scope, element, attrs) {
         var columnCount = 0;
         var rowCount = 0;
+        scope.current = {};
         if (scope.sheetOptions && scope.sheetOptions.columnCount)
           columnCount = scope.sheetOptions.columnCount;
         else if (scope.sheetData && scope.sheetData[0] && scope.sheetData[0].length)
@@ -24,13 +24,37 @@
           rowCount = scope.sheetData.length;
 
         scope.columns = $sheet.generateHeaders(columnCount);
+        scope.columnWidths = scope.columns.map(function () { return 50; });
+        scope.rowHeights = scope.sheetData.map(function () { return 25; });
+
         scope.selectCell = function (row, col) {
           angular.element(element[0].querySelector(".selected")).removeClass('selected');
-          current.row = row;
-          current.column = col;
-          angular.element(angular.element(element.find("tr")[row + 1]).find("td")[col + 1])
-            .addClass('selected');
+          scope.current.row = row;
+          scope.current.column = col;
+          var tbody = element.find("tbody");
+          var trs = tbody.find("tr");
+          var tr = angular.element(trs[row]);
+          var tds = tr.find("td");
+          var border = $window.parseFloat($window.getComputedStyle(tds[0])["border-left-width"]) / 2;
+          var td = angular.element(tds[col + 1]);
+          var cursor = angular.element(element[0].querySelector(".sheet-cursor"));
+          var style = $window.getComputedStyle(td[0]);
+          var top = $window.parseFloat($window.getComputedStyle(trs[0]).height) + border;
+          var left = $window.parseFloat($window.getComputedStyle(tds[0]).width) + border;
+          for (var i = 0; i < row; i++) {
+            top += $window.parseFloat($window.getComputedStyle(trs[i]).height);
+          }
+          for (var i = 0; i < col; i++) {
+            left += $window.parseFloat($window.getComputedStyle(tds[i+1]).width);
+          }
+
+          cursor[0].style.top = top + "px";
+          cursor[0].style.left = left + "px";
+          cursor[0].style.height = style.height;
+          cursor[0].style.width = style.width;
+          td.addClass('selected');
         };
+
         console.log('sheetSheet Directive, here I stand!');
       }
     };
