@@ -1,8 +1,8 @@
 'use strict';
 
 (function() {
-  angular.module('sheetDemo').directive('sheetSheet', ['$sheet', '$window', sheetDirective]);
-  function sheetDirective($sheet, $window) {
+  angular.module('sheetDemo').directive('sheetSheet', ['$sheet', '$window', '$timeout', sheetDirective]);
+  function sheetDirective($sheet, $window, $timeout) {
     return {
       scope: {
         sheetData: "=",
@@ -34,6 +34,7 @@
         scope.rowHeights = scope.sheetModel.map(function () { return 25; });
 
         scope.selectCell = function(row, col) {
+          console.log("select!");
           scope.editMode = false;
           angular.element(element[0].querySelector(".selected")).removeClass('selected');
           scope.current.row = row;
@@ -64,7 +65,11 @@
 
         scope.editCell = function(row, col) {
           console.log("edit!");
+          scope.selectCell(row, col);
           scope.editMode = true;
+          $timeout(function () {
+            element[0].querySelector(".sheet-cursor").querySelector("input").focus();
+          });
         };
         console.log('sheetSheet Directive, here I stand!');
       }
