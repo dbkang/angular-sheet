@@ -3,6 +3,37 @@
 (function() {
   angular.module('sheetDemo').factory('$sheet', [sheetFactory]);
   function sheetFactory() {
+    function wrapFormula(f) {
+      if (f instanceof Object)
+        return angular.copy(f);
+      else
+        return { formula: f };
+    }
+    
+    function SheetModel(data, format) {
+      if (!format) { // infer format if not supplied
+        if (data instanceof Array && (data.length == 0))
+          format = false;
+        else if (data instanceof Array && data[0] instanceof Array)
+          format = 'aa';
+        else if (data instanceof Array && data[0] instanceof Object)
+          format == 'ao';
+      }
+
+      if (format == 'aa')
+        this.data = data.map(function (row) { return row.map(wrapFormula); });
+      else if (format == 'ao') {
+        this.data = [];
+        data.forEach(function (cell) {
+          var row = cell.row;
+          var column = cell.column;
+          if (!this.data[row]) this.data[row] = [];
+          this.data[row][column] = angular.copy(cell);
+        });
+      }
+    };
+
+
     function SheetService() {
 
     };
@@ -28,7 +59,12 @@
       return result;
     }
 
+    function makeSheetModel(data, format) {
+      return new SheetModel(data, format);
+    }
+    
     SheetService.prototype.generateHeaders = generateHeaders;
+    SheetService.prototype.makeSheetModel = makeSheetModel;
 
     return new SheetService();
   }

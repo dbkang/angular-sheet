@@ -18,11 +18,7 @@
         else if (scope.sheetData && scope.sheetData[0] && scope.sheetData[0].length)
           columnCount = scope.sheetData[0].length;
 
-        scope.sheetModel = scope.sheetData.map(function (row) {
-          return row.map(function (cell) {
-            return { formula: cell };
-          });
-        });
+        scope.sheetModel = $sheet.makeSheetModel(scope.sheetData);
 
         if (scope.sheetOptions && scope.sheetOption.rowCount)
           rowCount = scope.sheetOptions.rowCount;
@@ -31,7 +27,7 @@
 
         scope.columns = $sheet.generateHeaders(columnCount);
         scope.columnWidths = scope.columns.map(function () { return 50; });
-        scope.rowHeights = scope.sheetModel.map(function () { return 25; });
+        scope.rowHeights = scope.sheetModel.data.map(function () { return 25; });
 
         scope.selectCell = function(row, col) {
           console.log("select!");

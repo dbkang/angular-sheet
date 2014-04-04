@@ -1,0 +1,9 @@
+{
+  "name": "dk-sheet",
+  "version": "0.0.1",
+  "devDependencies": {
+    "karma": "*",
+    "phantomjs": "*",
+    "bower": "*"
+  }
+}

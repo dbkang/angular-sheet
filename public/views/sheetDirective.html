@@ -9,7 +9,7 @@
       <th ng-repeat="column in columns track by column"><span>{{column}}</span></th>
     </thead>
     <tbody> 
-      <tr ng-repeat="row in sheetModel" ng-init="$rowIndex = $index;"
+      <tr ng-repeat="row in sheetModel.data" ng-init="$rowIndex = $index;"
           style="height: {{rowHeights[$index]}}px">
         <td class="row-header"><span>{{$rowIndex + 1}}</span></td>
         <td ng-repeat="cell in row track by $index"
@@ -24,7 +24,7 @@
   <div class="sheet-cursor" ng-show="current && (current.row || current.row == 0)" 
        ng-dblclick="editCell(current.row, current.column)">
     <input class="sheet-edit-box"
-           type="text" ng-model="sheetModel[current.row][current.column].formula"
+           type="text" ng-model="sheetModel.data[current.row][current.column].formula"
            style="width: 100%; height:100%"
            ng-if="editMode">
   </div>
