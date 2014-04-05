@@ -4,7 +4,7 @@
   angular.module('sheetDemo').factory('$formulaLexer', [lexer]);
   function lexer() {
     var opArray = [
-      '/', '+', '=', '-', '&', '*'
+      '/', '+', '=', '-', '&', '*', ':'
     ];
 
     var ops = {};
@@ -13,11 +13,21 @@
       ops[k] = { type: 'operator', value: k };
     });
 
+    var sepArray = [
+      '(', ')', ','
+    ];
+
+    var seps = {};
+
+    sepArray.forEach(function (k, i) {
+      seps[k] = { type: 'separator', value: k };
+    });
+
     var keywords = {};
 
-    var LPAREN = { type: 'token', value: '(' };
-    var RPAREN = { type: 'token', value: ')' };
-
+    function genName(name) {
+      return { type: 'name', value: name };
+    }
 
     function regexMatcher(regex, str, index) {
       var rest = str.slice(index);
@@ -28,6 +38,11 @@
         if (!match) return false;
         else return { tokens: [match], index: index + match.length };
       }
+    }
+
+    function nameMatcher(str, index) {
+      var result = regexMatcher(/^[$A-Za-z_][$A-Za-z0-9]*/, str, index);
+      return result && { tokens: [genName(result.tokens[0])], index: result.index };
     }
 
     function numberMatcher(str, index) {
@@ -41,14 +56,6 @@
            newIndex < str.length && str.charAt(newIndex).search(/^\s/) != -1;
            newIndex++);
       if (newIndex == index) return false; else return { tokens: [], index: newIndex };  
-    }
-
-    function leftParenMatcher(str, index) {
-      if (str.charAt(index) != '(') return false; else return { tokens: [LPAREN], index: index + 1 };  
-    }
-
-    function rightParenMatcher(str, index) {
-      if (str.charAt(index) != ')') return false; else return { tokens: [RPAREN], index: index + 1 };  
     }
 
     function numMatcher(str, index) {
@@ -74,6 +81,12 @@
       var found = opArray.filter(function (x) { return x == str.charAt(index); });
       if (found.length == 0) return false;
       else return { tokens: [ops[found[0]]], index: index + 1 };
+    }
+
+    function separatorMatcher(str, index) {
+      var found = sepArray.filter(function (x) { return x == str.charAt(index); });
+      if (found.length == 0) return false;
+      else return { tokens: [seps[found[0]]], index: index + 1 };
     }
 
     function stringMatcher(str, index) {
@@ -115,24 +128,25 @@
     var exports = {};
     exports.matchers = {
       spaceMatcher: spaceMatcher,
-      leftParenMatcher: leftParenMatcher,
-      rightParenMatcher: rightParenMatcher,
       numberMatcher: numberMatcher,
       operatorMatcher: operatorMatcher,
+      separatorMatcher: separatorMatcher,
       stringMatcher: stringMatcher,
+      nameMatcher: nameMatcher,
       all: [
         spaceMatcher,
-        leftParenMatcher,
-        rightParenMatcher,
+        separatorMatcher,
         numberMatcher,
         operatorMatcher,
-        stringMatcher
+        stringMatcher,
+        nameMatcher
       ]
     };
     exports.operators = ops;
     exports.tokens = {
-      LPAREN: LPAREN,
-      RPAREN: RPAREN
+      LPAREN: seps['('],
+      RPAREN: seps[')'],
+      COMMA: seps[',']
     };
     exports.tokenize = tokenize;
     return exports;
